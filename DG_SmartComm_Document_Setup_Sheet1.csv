@@ -1,0 +1,47 @@
+All items on this tab use BASIC.ELIG.DOC.1 setup in CORRESP.INPUT.DEF,,,,,,,,,
+,,,SMARTCOMM.CONFIG,,,CORRESP.TRACKING,,CORRESP.DATA,
+Letter Description,Program that creates letter,DG Trigger,Document Name,SmartComm ID,Returns Image,Recipient Type,Recipient ID,Group Number,Additional Recipient ID
+HIPAA Notice of Privacy Practices,HIPAA.NPP,"One of the following:
+- N in ACTIONS field in EROPTIONS
+- N in NEED field in EMPLOYEES
+Plus the following:
+- C or PS in NPP field in GROUPINFO",Meritain.HIPAA.Notice,690679345,N,DEPENDENT,Employee EEID.DEPNO,Current fileno,
+COBRA Introduction Letter,COBRAN,"One of the following:
+- C in ACTIONS field in EROPTIONS
+- C in NEED field in EMPLOYEES
+Plus the following:
+- Y or dollar in COBRAFEE in EMPLOYERS",Meritain.COBRA.Intro.Letter,690680007,N,DEPENDENT,Employee EEID.DEPNO,Current fileno,"Spouse EEID.DEPNO, if at same address and also needs a letter"
+Dependent COBRA Introduction Letter,COBRAN,"One of the following:
+- C in ACTIONS field in EROPTIONS
+- C in NEED field in EMPLOYEES
+Plus, dependent has COBRA elig benefits",Meritain.COBRA.Dependent.Notice,690680105,N,DEPENDENT,Spouse EEID.DEPNO,Current fileno,
+Disabled Dependent Denial Notice,PRINT.DISABLED.DEP.LETTERS,"All of the following:
+- Y in DDV field in EROPTIONS
+- H in STATUS field in EMPLOYEES
+- DL in NEED field in DEPENDENTS",Disabled.Dependent.-.Denial,690918681,Y,DEPENDENT,Employee EEID.DEPNO,Current fileno,Disabled Dependent's EEID.DEPNO
+Disabled Dependent Indefinite Approval Notice,PRINT.DISABLED.DEP.LETTERS,"All of the following:
+- Y in DDV field in EROPTIONS
+- H in STATUS field in EMPLOYEES
+- IA in NEED field in DEPENDENTS",Disabled.Dependent.-.Indefinite.Approval,690918738,Y,DEPENDENT,Employee EEID.DEPNO,Current fileno,Disabled Dependent's EEID.DEPNO
+Disabled Dependent Recertification Notice,PRINT.DISABLED.DEP.LETTERS,"All of the following:
+- Y in DDV field in EROPTIONS
+- H in STATUS field in EMPLOYEES
+- RC in NEED field in DEPENDENTS",Disabled.Dependent.-.Recertification,690918752,Y,DEPENDENT,Employee EEID.DEPNO,Current fileno,Disabled Dependent's EEID.DEPNO
+Disabled Dependent Review Request,PRINT.DISABLED.DEP.LETTERS,"All of the following:
+- Y in DDV field in EROPTIONS
+- H in STATUS field in EMPLOYEES
+- RR in NEED field in DEPENDENTS",Disabled.Dependent.-.Review.Request,690918765,Y,DEPENDENT,Employee EEID.DEPNO,Current fileno,Disabled Dependent's EEID.DEPNO
+Disabled Dependent Limited Approval Notice,PRINT.DISABLED.DEP.LETTERS,"All of the following:
+- Y in DDV field in EROPTIONS
+- H in STATUS field in EMPLOYEES
+- LA in NEED field in DEPENDENTS
+- DISABILITY.EXPIRATION.DATE populated in DEPENDENTS",Disabled.Dependent.-.Limited.Approval,690918728,Y,DEPENDENT,Employee EEID.DEPNO,Current fileno,Disabled Dependent's EEID.DEPNO
+Disabled Dependent No Reponse Letter,PRINT.DISABLED.DEP.LETTERS,"All of the following:
+- Y in DDV field in EROPTIONS
+- H in STATUS field in EMPLOYEES
+- NR in NEED field in DEPENDENTS
+- Date in DDL.SENT in DEPENDENTS
+- RR or RC in DDL.LETTERS in DEPENDENTS",Disabled.Dependent.-.No.Response,690918705,Y,DEPENDENT,Employee EEID.DEPNO,Current fileno,Disabled Dependent's EEID.DEPNO
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
