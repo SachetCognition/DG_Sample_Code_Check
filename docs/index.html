@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DG Sample Code Check &mdash; System Analysis Report</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>document.addEventListener('DOMContentLoaded',()=>{mermaid.initialize({startOnLoad:true,theme:'default',securityLevel:'loose',flowchart:{useMaxWidth:true,htmlLabels:true}})});</script>
+<style>
+:root{--sidebar-w:260px;--max-content:1100px;--bg:#f8f9fa;--sidebar-bg:#1e293b;--sidebar-text:#cbd5e1;--sidebar-hover:#38bdf8;--text:#1e293b;--heading:#0f172a;--accent:#2563eb;--border:#e2e8f0;--code-bg:#1e293b;--code-text:#e2e8f0;--table-alt:#f1f5f9;--table-head:#1e40af;--success:#16a34a;--warning:#d97706;--banner-bg:linear-gradient(135deg,#1e40af 0%,#7c3aed 100%)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:16px}
+/* Sidebar */
+nav.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--sidebar-bg);overflow-y:auto;padding:1rem 0;z-index:100}
+nav.sidebar .logo{padding:0.75rem 1.25rem;font-weight:700;font-size:1rem;color:#fff;border-bottom:1px solid #334155;margin-bottom:0.5rem}
+nav.sidebar a{display:block;padding:0.4rem 1.25rem;color:var(--sidebar-text);text-decoration:none;font-size:0.85rem;transition:all .15s}
+nav.sidebar a:hover,nav.sidebar a.active{color:#fff;background:#334155;border-left:3px solid var(--sidebar-hover)}
+nav.sidebar a.sub{padding-left:2.25rem;font-size:0.8rem;color:#94a3b8}
+/* Main content */
+main{margin-left:var(--sidebar-w);padding:0 2rem 4rem}
+.banner{background:var(--banner-bg);color:#fff;padding:2.5rem 2rem;margin:0 -2rem 2rem;text-align:center}
+.banner h1{font-size:2rem;font-weight:800;letter-spacing:-0.5px}
+.banner p{opacity:0.85;margin-top:0.4rem;font-size:0.95rem}
+h2{font-size:1.6rem;color:var(--heading);margin:2.5rem 0 1rem;padding-bottom:0.4rem;border-bottom:2px solid var(--accent)}
+h3{font-size:1.25rem;color:var(--heading);margin:1.8rem 0 0.8rem}
+h4{font-size:1.05rem;color:#334155;margin:1.2rem 0 0.6rem}
+p,li{margin-bottom:0.5rem}
+ul,ol{padding-left:1.5rem;margin-bottom:1rem}
+a{color:var(--accent)}
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:1rem 0 1.5rem;font-size:0.9rem}
+thead th{background:var(--table-head);color:#fff;padding:0.6rem 0.75rem;text-align:left;font-weight:600}
+tbody td{padding:0.55rem 0.75rem;border-bottom:1px solid var(--border)}
+tbody tr:nth-child(even){background:var(--table-alt)}
+tbody tr:hover{background:#e0e7ff}
+/* Code */
+pre{background:var(--code-bg);color:var(--code-text);padding:1rem 1.25rem;border-radius:6px;overflow-x:auto;margin:1rem 0 1.5rem;font-size:0.85rem;line-height:1.6}
+code{font-family:'Fira Code',Consolas,'Courier New',monospace}
+p code,li code,td code{background:#e2e8f0;color:#b91c1c;padding:0.15rem 0.4rem;border-radius:3px;font-size:0.85em}
+/* Mermaid */
+.mermaid{text-align:center;margin:1.5rem auto;padding:1rem;max-width:100%;overflow-x:auto}
+/* Cards */
+.card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:1.25rem 1.5rem;margin:1rem 0}
+.card h4{margin-top:0}
+/* Badge */
+.badge{display:inline-block;padding:0.15rem 0.6rem;border-radius:9999px;font-size:0.75rem;font-weight:600}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.badge-green{background:#dcfce7;color:#166534}
+.badge-amber{background:#fef3c7;color:#92400e}
+.badge-red{background:#fee2e2;color:#991b1b}
+/* Print */
+@media print{
+  nav.sidebar{display:none}
+  main{margin-left:0}
+  .banner{background:#1e40af!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  pre{white-space:pre-wrap;word-break:break-all}
+}
+/* Responsive */
+@media(max-width:900px){
+  nav.sidebar{position:relative;width:100%;height:auto;max-height:50vh}
+  main{margin-left:0}
+  .banner{margin:0 -1rem 1.5rem;padding:1.5rem 1rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar">
+  <div class="logo">DG Analysis Report</div>
+  <a href="#s1">1. Executive Summary</a>
+  <a href="#s2">2. Record Types</a>
+  <a href="#s2-1" class="sub">2.1 EMPLOYEES</a>
+  <a href="#s2-2" class="sub">2.2 EMPLOYERS</a>
+  <a href="#s2-3" class="sub">2.3 EROPTIONS</a>
+  <a href="#s2-4" class="sub">2.4 DEPENDENTS</a>
+  <a href="#s2-5" class="sub">2.5 ERADJ</a>
+  <a href="#s2-6" class="sub">2.6 CORRESP.DATA.REC</a>
+  <a href="#s2-7" class="sub">2.7 CORRESP.TRACKING</a>
+  <a href="#s2-8" class="sub">2.8 SAVEDLISTS</a>
+  <a href="#s2-9" class="sub">2.9 Supplementary</a>
+  <a href="#s2-10" class="sub">2.10 SmartComm Config</a>
+  <a href="#s3">3. The 9 Letter Types</a>
+  <a href="#s4">4. Dependency Graph</a>
+  <a href="#s5">5. Coupling Map</a>
+  <a href="#s6">6. Coupling Points Table</a>
+  <a href="#s7">7. Decoupling Strategy</a>
+  <a href="#s8">8. Decoupled Architecture</a>
+  <a href="#s9">9. Priority Order</a>
+  <a href="#s10">10. Program Flow Diagrams</a>
+  <a href="#s10-cobran" class="sub">COBRAN Flow</a>
+  <a href="#s10-hipaa" class="sub">HIPAA.NPP Flow</a>
+  <a href="#s10-pddl" class="sub">PDDL Flow</a>
+</nav>
+
+<main>
+
+<div class="banner">
+  <h1>DG Sample Code Check &mdash; System Analysis Report</h1>
+  <p>Healthcare Benefits Correspondence Automation &bull; Pick/MultiValue (UniData) Platform</p>
+  <p style="font-size:0.8rem;margin-top:0.6rem">Generated April 2025</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: Executive Summary -->
+<!-- ============================================================ -->
+<h2 id="s1">1. Executive Summary</h2>
+
+<p>This report provides a comprehensive analysis of the <strong>DG Sample Code Check</strong> repository, a healthcare benefits correspondence automation system built on the <strong>Pick/MultiValue (UniData)</strong> platform. The system manages three categories of regulatory notices:</p>
+
+<ul>
+  <li><strong>COBRA Notices</strong> &mdash; Initial COBRA election notices for employees and dependents losing group health coverage</li>
+  <li><strong>HIPAA Privacy Notices</strong> &mdash; Notice of Privacy Practices required under HIPAA regulations</li>
+  <li><strong>Disabled Dependent Letters</strong> &mdash; Six letter types for the disabled dependent validation workflow (review requests, approvals, denials, recertifications, no-response)</li>
+</ul>
+
+<p>The system comprises <strong>3 main programs</strong>:</p>
+
+<table>
+<thead><tr><th>Program</th><th>Purpose</th><th>Letter Count</th></tr></thead>
+<tbody>
+<tr><td><code>COBRAN</code></td><td>COBRA initial notice generation via SmartComm</td><td>2</td></tr>
+<tr><td><code>HIPAA.NPP</code></td><td>HIPAA Notice of Privacy Practices (Self-Funded via SmartComm, Fully-Insured via PCL)</td><td>1</td></tr>
+<tr><td><code>PRINT.DISABLED.DEP.LETTERS</code></td><td>Disabled dependent letter generation via SmartComm</td><td>6</td></tr>
+</tbody>
+</table>
+
+<p>These programs interact with <strong>10+ shared data record types</strong> including EMPLOYEES, EMPLOYERS, EROPTIONS, DEPENDENTS, and ERADJ. All three programs submit correspondence through the <code>*CREATE.CORRESP.TRACKING</code> subroutine using the <code>BASIC.SMARTCOMM.DOC.1</code> correspondence input definition.</p>
+
+<p>Key findings include <strong>8 coupling points</strong> where functional concerns are tangled across the programs, and a proposed <strong>decoupling strategy</strong> with 8 extracted shared subroutines that would reduce code duplication and improve maintainability.</p>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: Record Types -->
+<!-- ============================================================ -->
+<h2 id="s2">2. Record Types &mdash; Full Analysis</h2>
+
+<!-- 2.1 EMPLOYEES -->
+<h3 id="s2-1">2.1 EMPLOYEES Record</h3>
+<div class="card">
+<p><strong>Description:</strong> Core employee/member record containing enrollment status, coverage, effective dates, and demographic data. Each EEID can have multi-valued status lines corresponding to different dependents/relationships.</p>
+<p><strong>Key:</strong> <code>EEID</code> (Employee ID)</p>
+<p><strong>Loaded via:</strong> <code>$INCLUDE BP EMPLOYEES.INS</code> &rarr; <code>MAT EEREC</code></p>
+<p><strong>Used by:</strong> <span class="badge badge-blue">COBRAN</span> <span class="badge badge-green">HIPAA.NPP</span> <span class="badge badge-amber">PRINT.DISABLED.DEP.LETTERS</span></p>
+
+<h4>Key Fields</h4>
+<table>
+<thead><tr><th>Field Name</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>EESTATUS</code></td><td>Multi-valued status codes: A (Active), P (Pending COBRA), T (Terminated), D (Deceased), W (Waived), R (Retired), I (Inactive)</td></tr>
+<tr><td><code>EENEED</code></td><td>Trigger flag &mdash; C (COBRA), N (HIPAA NPP), X (Exclude/already processed)</td></tr>
+<tr><td><code>EEFILENO</code></td><td>Foreign key to EMPLOYERS record (multi-valued, indexed by effective date)</td></tr>
+<tr><td><code>EEEFFDATE</code></td><td>Multi-valued effective dates, sorted descending</td></tr>
+<tr><td><code>EERELATIONSHIP</code></td><td>E (Employee), S (Spouse), C (Child)</td></tr>
+<tr><td><code>EETERMDATE</code></td><td>Termination date</td></tr>
+<tr><td><code>EEMEDCOV / EEDENCOV / EEVISCOV</code></td><td>Medical, dental, vision coverage codes (multi-valued by effective date)</td></tr>
+<tr><td><code>EEHIPAA.SENT</code></td><td>Multi-valued dates when HIPAA notices were sent (indexed by DEPIDX)</td></tr>
+<tr><td><code>EEDEPNO</code></td><td>Dependent number (multi-valued)</td></tr>
+<tr><td><code>EELAST / EEFIRST</code></td><td>Employee last/first name</td></tr>
+<tr><td><code>EEADD1 / EEADD2 / EECITY / EESTATE / EEZIP</code></td><td>Employee mailing address</td></tr>
+</tbody>
+</table>
+
+<h4>Access Pattern</h4>
+<pre><code>CALL *READREC('',MAT EEREC,EMPLOYEES,EEID,'')
+* Then locate current effective date index:
+LOCATE TODAY IN EEEFFDATE&lt;1,1&gt; BY 'DR' SETTING EEIDX ELSE NULL
+IF EEEFFDATE&lt;1,EEIDX&gt; = '' AND EEIDX &gt; 1 THEN EEIDX -= 1</code></pre>
+</div>
+
+<!-- 2.2 EMPLOYERS -->
+<h3 id="s2-2">2.2 EMPLOYERS Record</h3>
+<div class="card">
+<p><strong>Description:</strong> Employer/group record with billing configuration, state jurisdiction, trust type, and termination data. Cached in memory when FILENO changes.</p>
+<p><strong>Key:</strong> <code>FILENO</code> (from <code>EEFILENO</code>)</p>
+<p><strong>Loaded via:</strong> <code>$INCLUDE BP EMPLOYERS.INS</code> &rarr; <code>MAT ERREC</code></p>
+<p><strong>Used by:</strong> <span class="badge badge-blue">COBRAN</span> <span class="badge badge-green">HIPAA.NPP</span> <span class="badge badge-amber">PRINT.DISABLED.DEP.LETTERS</span></p>
+
+<h4>Key Fields</h4>
+<table>
+<thead><tr><th>Field Name</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>EREFFDATE</code></td><td>Multi-valued effective dates for employer configuration</td></tr>
+<tr><td><code>ERCOBRAFEE</code></td><td>COBRA fee flag/amount (Y/N/dollar) &mdash; gates whether COBRA notices are sent</td></tr>
+<tr><td><code>ERBILLEDTO</code></td><td>Last billed-through date; used to calculate ERADJ billing period</td></tr>
+<tr><td><code>ERACTUAL.STATE</code></td><td>State jurisdiction for compliance rules</td></tr>
+<tr><td><code>ERTRUST</code></td><td>Trust type &mdash; determines Self-Funded vs Fully-Insured routing in HIPAA.NPP</td></tr>
+<tr><td><code>ERTERMDATE</code></td><td>Employer termination date</td></tr>
+<tr><td><code>ERINS.CARRIER</code></td><td>Insurance carrier code &mdash; used for FI HIPAA form lookup</td></tr>
+</tbody>
+</table>
+
+<h4>Access Pattern</h4>
+<pre><code>* Cached read &mdash; only re-read when FILENO changes:
+IF EEFILENO&lt;1,EEIDX&gt; &lt;&gt; FILENO THEN
+   FILENO = EEFILENO&lt;1,EEIDX&gt;
+   CALL *READREC('',MAT ERREC,EMPLOYERS,FILENO,'')
+END</code></pre>
+</div>
+
+<!-- 2.3 EROPTIONS -->
+<h3 id="s2-3">2.3 EROPTIONS Record</h3>
+<div class="card">
+<p><strong>Description:</strong> Employer options record containing fee schedules and feature flags. Always read alongside EMPLOYERS using the same FILENO key.</p>
+<p><strong>Key:</strong> <code>FILENO</code> (same as EMPLOYERS)</p>
+<p><strong>Loaded via:</strong> <code>$INCLUDE BP EROPTIONS.INS</code> &rarr; <code>MAT EOREC</code></p>
+<p><strong>Used by:</strong> <span class="badge badge-blue">COBRAN</span> <span class="badge badge-green">HIPAA.NPP</span></p>
+
+<h4>Key Fields</h4>
+<table>
+<thead><tr><th>Field Name</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>EOEFFDATE</code></td><td>Multi-valued effective dates for options</td></tr>
+<tr><td><code>EOCOBRA.NOTICE</code></td><td>Dollar amount charged per COBRA notice</td></tr>
+<tr><td><code>EOHIPAAP</code></td><td>HIPAA privacy fee/flag &mdash; blank means skip SF billing</td></tr>
+<tr><td><code>EODDV</code></td><td>Disabled dependent validation flag (Y/N)</td></tr>
+</tbody>
+</table>
+
+<h4>Access Pattern</h4>
+<pre><code>CALL *READREC('',MAT EOREC,EROPTIONS,FILENO,'')
+LOCATE TODAY IN EOEFFDATE&lt;1,1&gt; BY 'DR' SETTING EOIDX ELSE NULL
+IF EOEFFDATE&lt;1,EOIDX&gt; = '' AND EOIDX &gt; 1 THEN EOIDX -= 1</code></pre>
+</div>
+
+<!-- 2.4 DEPENDENTS -->
+<h3 id="s2-4">2.4 DEPENDENTS Record</h3>
+<div class="card">
+<p><strong>Description:</strong> Dependent-level record tracking disabled dependent letter workflow state, including what letters have been sent and when. Key is a composite of employee ID and dependent number.</p>
+<p><strong>Key:</strong> <code>EEID.DEPNO</code> (e.g., <code>12345.01</code>)</p>
+<p><strong>Loaded via:</strong> <code>$INCLUDE BP DEPENDENTS.INS</code> &rarr; <code>MAT DPREC</code></p>
+<p><strong>Used by:</strong> <span class="badge badge-green">HIPAA.NPP</span> <span class="badge badge-amber">PRINT.DISABLED.DEP.LETTERS</span> <span class="badge badge-blue">COBRAN</span> (indirectly)</p>
+
+<h4>Key Fields</h4>
+<table>
+<thead><tr><th>Field Name</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>DPDEP.NEED</code></td><td>Comma-delimited codes: RR (Review Request), RC (Recertification), IA (Indefinite Approval), LA (Limited Approval), DL (Denial), NR (No Response)</td></tr>
+<tr><td><code>DPDDL.SENT</code></td><td>Multi-valued dates when disabled dep letters were sent</td></tr>
+<tr><td><code>DPDDL.LETTERS</code></td><td>Multi-valued letter type codes sent on each date</td></tr>
+<tr><td><code>DPDISABILITY.EXPIRATION.DATE</code></td><td>Required for Limited Approval (LA) letters</td></tr>
+<tr><td><code>DPREL.TYPE.EFFDATE</code></td><td>Relationship type effective date (used in HIPAA alt-address logic)</td></tr>
+<tr><td><code>DPADD1&ndash;DPZIP / DPCOUNTRY</code></td><td>Dependent alternate address fields</td></tr>
+</tbody>
+</table>
+
+<h4>Access Pattern</h4>
+<pre><code>* Read with SKIP lock mode (non-blocking):
+CALL *READREC('',MAT DPREC,DEPENDENTS,EEID.DEPNO,'SKIP')
+* Write back with transaction log:
+CALL *WRITEREC('',MAT DPREC,DEPENDENTS,EEID.DEPNO,'TRANS.LOG,':PROGRAM.NAME)</code></pre>
+</div>
+
+<!-- 2.5 ERADJ -->
+<h3 id="s2-5">2.5 ERADJ (Employer Adjustments) Record</h3>
+<div class="card">
+<p><strong>Description:</strong> Billing adjustment records used to charge employers for COBRA and HIPAA notice fees. Key is constructed from FILENO + billing period + an incrementing suffix to avoid collisions.</p>
+<p><strong>Key:</strong> <code>FILENO + BILLPERIOD + SUFFIX</code> (e.g., <code>12345200401</code>, <code>123452004011</code>)</p>
+<p><strong>Loaded via:</strong> <code>$INCLUDE BP ERADJ.INS</code> &rarr; <code>MAT EAREC</code></p>
+<p><strong>Used by:</strong> <span class="badge badge-blue">COBRAN</span> (COBRACHG) <span class="badge badge-green">HIPAA.NPP</span> (HIPAA)</p>
+
+<h4>Key Fields</h4>
+<table>
+<thead><tr><th>Field Name</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>EADESC</code></td><td>Description (e.g., "5 COBRA NOTICES" or "3 HIPAA")</td></tr>
+<tr><td><code>EACOMMENTS</code></td><td>Multi-valued list of EEID/EEID.DEPNO processed</td></tr>
+<tr><td><code>EADISTFIELD</code></td><td>Distribution field: <code>COBRACHG</code> or <code>HIPAA</code></td></tr>
+<tr><td><code>EADISTAMOUNT</code></td><td>Running total amount for this distribution line</td></tr>
+<tr><td><code>EACOVPERIOD</code></td><td>Coverage period (YYYYMM)</td></tr>
+<tr><td><code>EAAMOUNT</code></td><td>Grand total amount on the adjustment record</td></tr>
+</tbody>
+</table>
+
+<h4>Access Pattern (Increment-or-Create Loop)</h4>
+<pre><code>SUFFIX = ''
+LOOP
+   FILENO.KEY = EEFILENO&lt;1,EEIDX&gt;:BILLPERIODO:SUFFIX
+   SUFFIX += 1
+   CALL *READREC('',MAT EAREC,ERADJ,FILENO.KEY,'WAIT')
+   IF @USER.RETURN.CODE # '' THEN
+      RELEASE ERADJ,FILENO.KEY
+      EXIT          ;* record doesn't exist &mdash; create new
+   END
+   IF EADESC[13] = 'COBRA NOTICES' THEN EXIT  ;* found matching record
+REPEAT</code></pre>
+</div>
+
+<!-- 2.6 CORRESP.DATA.REC -->
+<h3 id="s2-6">2.6 CORRESP.DATA.REC (In-Memory Dynamic Array)</h3>
+<div class="card">
+<p><strong>Description:</strong> Not a file &mdash; this is a dynamic array assembled in memory before calling <code>*CREATE.CORRESP.TRACKING</code>. Its structure is defined by the <code>CORRESP.INPUT.DEF</code> record <code>BASIC.SMARTCOMM.DOC.1</code>.</p>
+<p><strong>Used by:</strong> <span class="badge badge-blue">COBRAN</span> <span class="badge badge-green">HIPAA.NPP</span> <span class="badge badge-amber">PRINT.DISABLED.DEP.LETTERS</span></p>
+
+<h4>Key Attributes</h4>
+<table>
+<thead><tr><th>Position</th><th>Name</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>&lt;2&gt;</code></td><td>GroupNum / FILENO</td><td>Employer group number</td></tr>
+<tr><td><code>&lt;5&gt;</code></td><td>AdditionalEEIDDepno</td><td>Additional dependent ID (spouse for COBRAN, disabled dep for PDDL)</td></tr>
+<tr><td><code>&lt;6&gt;</code></td><td>AdditionalDependentPurpose</td><td><code>RECIPIENT</code> (COBRAN &mdash; spouse gets letter) or <code>SUBJECT</code> (PDDL &mdash; disabled dep is subject of letter)</td></tr>
+</tbody>
+</table>
+
+<h4>Assembly Pattern</h4>
+<pre><code>CORRESP.DATA.REC = ''
+CORRESP.DATA.REC&lt;2&gt; = FILENO
+CORRESP.DATA.REC&lt;5&gt; = EEID.DEPNO    ;* AdditionalEEIDDepno
+CORRESP.DATA.REC&lt;6&gt; = 'SUBJECT'     ;* AdditionalDependentPurpose</code></pre>
+</div>
+
+<!-- 2.7 CORRESP.TRACKING -->
+<h3 id="s2-7">2.7 CORRESP.TRACKING Record</h3>
+<div class="card">
+<p><strong>Description:</strong> Auto-generated record created by the <code>*CREATE.CORRESP.TRACKING</code> cataloged subroutine. This is the interface to the SmartComm document generation system.</p>
+
+<h4>Standard Parameters (All 3 Programs)</h4>
+<table>
+<thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td><code>CORRESP.INPUT.DEF.ID</code></td><td><code>'BASIC.SMARTCOMM.DOC.1'</code></td></tr>
+<tr><td><code>RECIPIENT.TYPE</code></td><td><code>'DEPENDENT'</code></td></tr>
+<tr><td><code>METHOD.REQUESTED</code></td><td><code>'LOOKUP'</code></td></tr>
+<tr><td><code>REQUEST.SOURCE</code></td><td><code>PROGRAM.NAME</code> (e.g., <code>'COBRAN'</code>, <code>'HIPAA.NPP'</code>, etc.)</td></tr>
+</tbody>
+</table>
+
+<h4>Call Signature</h4>
+<pre><code>CALL *CREATE.CORRESP.TRACKING(
+   ERROR.MESSAGES,
+   CORRESP.DATA.REC,
+   CORRESP.INPUT.DEF.ID,
+   RECIPIENT.TYPE,
+   RECIPIENT.ID,
+   METHOD.REQUESTED,
+   REQUEST.SOURCE,
+   REQUESTOR.TRACKING.ID,
+   DOCUMENT.NAME,
+   '','','',''
+)</code></pre>
+</div>
+
+<!-- 2.8 SAVEDLISTS -->
+<h3 id="s2-8">2.8 SAVEDLISTS / Audit Lists</h3>
+<div class="card">
+<p><strong>Description:</strong> Named lists stored in the <code>&amp;SAVEDLISTS&amp;</code> system file. Used for audit trails and re-run support.</p>
+
+<h4>List Name Patterns</h4>
+<table>
+<thead><tr><th>Pattern</th><th>Program</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>COBRAN.DONE{logname}</code></td><td>COBRAN</td><td>Primary completion list (overwritten each run)</td></tr>
+<tr><td><code>COBRAN.DONE{logname}.{date}.{time}</code></td><td>COBRAN</td><td>Timestamped completion list (preserved)</td></tr>
+<tr><td><code>STORE.MERITAIN.COBRA.INTRO.LETTER</code></td><td>COBRAN</td><td>Employee notice tracking</td></tr>
+<tr><td><code>STORE.MERITAIN.COBRA.DEPENDENT.NOTICE</code></td><td>COBRAN</td><td>Dependent notice tracking</td></tr>
+<tr><td><code>COBRA.DEP.NOTICE.{logname}</code></td><td>COBRAN</td><td>Dependent EEID.DEPNO list</td></tr>
+<tr><td><code>HIPAA.PDONE{logname}</code></td><td>HIPAA.NPP</td><td>All processed EEID.DEPNOs</td></tr>
+<tr><td><code>HIPAA.PDONE.SC.{logname}</code></td><td>HIPAA.NPP</td><td>SmartComm-routed (SF) members</td></tr>
+<tr><td><code>EEID.LIST.{logname}</code></td><td>HIPAA.NPP</td><td>Filtered EEID list for processing</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- 2.9 Supplementary Records -->
+<h3 id="s2-9">2.9 Supplementary Records</h3>
+<div class="card">
+<p>These records are used primarily by <code>HIPAA.NPP</code> for the Fully-Insured (FI) PCL generation path:</p>
+<table>
+<thead><tr><th>Record</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>SYSMGMT</code> (key: <code>HIPAA.DAILY.COUNTER</code>)</td><td>Daily run counter to prevent duplicate PCL filenames</td></tr>
+<tr><td><code>GROUPINFO</code> (via <code>$INCLUDE BP GROUPINFO.INS</code>)</td><td>Group-level NPP configuration (<code>GINPP</code> flag: C/PS/G)</td></tr>
+<tr><td><code>CERTS.LAYOUT</code></td><td>FI form layout lookup by insurance carrier</td></tr>
+<tr><td><code>CERTS.MERGE</code></td><td>Merge field definitions for FI forms</td></tr>
+<tr><td><code>CERTS.TEXT2</code></td><td>Text content for FI HIPAA form pages</td></tr>
+<tr><td><code>LETTER.COPIES</code></td><td>Copy count configuration for FI printed notices</td></tr>
+<tr><td><code>OUTPUT.CONTROL</code></td><td>FI output configuration including <code>HIPAA.YEARS</code> (variable cutoff period)</td></tr>
+<tr><td><code>FTP.LOG / FTP.REQUESTS</code></td><td>FTP transmission tracking for RedCard print vendor</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- 2.10 SmartComm Configuration -->
+<h3 id="s2-10">2.10 SmartComm Configuration</h3>
+<div class="card">
+<p>All 9 document types use the <code>BASIC.SMARTCOMM.DOC.1</code> setup in <code>CORRESP.INPUT.DEF</code>. The following table maps document names to their SmartComm IDs (from the CSV configuration):</p>
+<table>
+<thead><tr><th>#</th><th>Letter Description</th><th>Document Name</th><th>SmartComm ID</th><th>Returns Image</th><th>Program</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>HIPAA Notice of Privacy Practices</td><td><code>Meritain.HIPAA.Notice</code></td><td>690679345</td><td>N</td><td>HIPAA.NPP</td></tr>
+<tr><td>2</td><td>COBRA Introduction Letter</td><td><code>Meritain.COBRA.Intro.Letter</code></td><td>690680007</td><td>N</td><td>COBRAN</td></tr>
+<tr><td>3</td><td>Dependent COBRA Introduction Letter</td><td><code>Meritain.COBRA.Dependent.Notice</code></td><td>690680105</td><td>N</td><td>COBRAN</td></tr>
+<tr><td>4</td><td>Disabled Dependent Denial Notice</td><td><code>Disabled.Dependent.-.Denial</code></td><td>690918681</td><td>Y</td><td>PRINT.DISABLED.DEP.LETTERS</td></tr>
+<tr><td>5</td><td>Disabled Dependent Indefinite Approval</td><td><code>Disabled.Dependent.-.Indefinite.Approval</code></td><td>690918738</td><td>Y</td><td>PRINT.DISABLED.DEP.LETTERS</td></tr>
+<tr><td>6</td><td>Disabled Dependent Recertification</td><td><code>Disabled.Dependent.-.Recertification</code></td><td>690918752</td><td>Y</td><td>PRINT.DISABLED.DEP.LETTERS</td></tr>
+<tr><td>7</td><td>Disabled Dependent Review Request</td><td><code>Disabled.Dependent.-.Review.Request</code></td><td>690918765</td><td>Y</td><td>PRINT.DISABLED.DEP.LETTERS</td></tr>
+<tr><td>8</td><td>Disabled Dependent Limited Approval</td><td><code>Disabled.Dependent.-.Limited.Approval</code></td><td>690918728</td><td>Y</td><td>PRINT.DISABLED.DEP.LETTERS</td></tr>
+<tr><td>9</td><td>Disabled Dependent No Response Letter</td><td><code>Disabled.Dependent.-.No.Response</code></td><td>690918705</td><td>Y</td><td>PRINT.DISABLED.DEP.LETTERS</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: The 9 Letter Types -->
+<!-- ============================================================ -->
+<h2 id="s3">3. The 9 Letter Types &mdash; Identified from Code</h2>
+
+<p>Each letter type is discoverable directly from the source code without needing the CSV configuration file:</p>
+
+<h3>From COBRAN.md</h3>
+<ol>
+<li><strong><code>Meritain.COBRA.Intro.Letter</code></strong> &mdash; Assigned to <code>TEMPLATE.NAME</code> at line 178. Sent to the employee as the primary COBRA election notice.</li>
+<li><strong><code>Meritain.COBRA.Dependent.Notice</code></strong> &mdash; Assigned to <code>DEP.TEMPLATE.NAME</code> at line 182. Sent to spouses at different addresses who also have COBRA-eligible benefits.</li>
+</ol>
+
+<h3>From HIPAA.NPP.md</h3>
+<ol start="3">
+<li><strong><code>Meritain.HIPAA.Notice</code></strong> &mdash; Assigned to <code>DOCUMENT.NAME</code> at line 1287. Used for Self-Funded groups routed through SmartComm.</li>
+</ol>
+
+<h3>From PRINT.DISABLED.DEP.LETTERS.md (lines 148&ndash;173)</h3>
+<p>The <code>LTR.TYPES</code> and <code>LTR.TYPES.TEMPLATE</code> parallel arrays define 6 letter types:</p>
+<ol start="4">
+<li><strong><code>Disabled.Dependent.-.Review.Request</code></strong> (code: <code>RR</code>)</li>
+<li><strong><code>Disabled.Dependent.-.Recertification</code></strong> (code: <code>RC</code>)</li>
+<li><strong><code>Disabled.Dependent.-.Indefinite.Approval</code></strong> (code: <code>IA</code>)</li>
+<li><strong><code>Disabled.Dependent.-.Limited.Approval</code></strong> (code: <code>LA</code>)</li>
+<li><strong><code>Disabled.Dependent.-.Denial</code></strong> (code: <code>DL</code>)</li>
+<li><strong><code>Disabled.Dependent.-.No.Response</code></strong> (code: <code>NR</code>)</li>
+</ol>
+
+<h3>Summary Table</h3>
+<table>
+<thead><tr><th>#</th><th>Letter Name</th><th>Template / Document Name</th><th>Source Program</th><th>Trigger Condition</th><th>SmartComm ID</th><th>Returns Image</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>COBRA Intro Letter</td><td><code>Meritain.COBRA.Intro.Letter</code></td><td>COBRAN</td><td>EENEED='C' + ERCOBRAFEE &gt; 0</td><td>690680007</td><td>N</td></tr>
+<tr><td>2</td><td>COBRA Dependent Notice</td><td><code>Meritain.COBRA.Dependent.Notice</code></td><td>COBRAN</td><td>Spouse at different address + COBRA eligible</td><td>690680105</td><td>N</td></tr>
+<tr><td>3</td><td>HIPAA Privacy Notice</td><td><code>Meritain.HIPAA.Notice</code></td><td>HIPAA.NPP</td><td>EENEED='N' + SF group + EOHIPAAP set</td><td>690679345</td><td>N</td></tr>
+<tr><td>4</td><td>DD Review Request</td><td><code>Disabled.Dependent.-.Review.Request</code></td><td>PRINT.DISABLED.DEP.LETTERS</td><td>DPDEP.NEED contains 'RR'</td><td>690918765</td><td>Y</td></tr>
+<tr><td>5</td><td>DD Recertification</td><td><code>Disabled.Dependent.-.Recertification</code></td><td>PRINT.DISABLED.DEP.LETTERS</td><td>DPDEP.NEED contains 'RC'</td><td>690918752</td><td>Y</td></tr>
+<tr><td>6</td><td>DD Indefinite Approval</td><td><code>Disabled.Dependent.-.Indefinite.Approval</code></td><td>PRINT.DISABLED.DEP.LETTERS</td><td>DPDEP.NEED contains 'IA'</td><td>690918738</td><td>Y</td></tr>
+<tr><td>7</td><td>DD Limited Approval</td><td><code>Disabled.Dependent.-.Limited.Approval</code></td><td>PRINT.DISABLED.DEP.LETTERS</td><td>DPDEP.NEED contains 'LA' + expiration date set</td><td>690918728</td><td>Y</td></tr>
+<tr><td>8</td><td>DD Denial</td><td><code>Disabled.Dependent.-.Denial</code></td><td>PRINT.DISABLED.DEP.LETTERS</td><td>DPDEP.NEED contains 'DL'</td><td>690918681</td><td>Y</td></tr>
+<tr><td>9</td><td>DD No Response</td><td><code>Disabled.Dependent.-.No.Response</code></td><td>PRINT.DISABLED.DEP.LETTERS</td><td>DPDEP.NEED contains 'NR' + prior RR/RC sent</td><td>690918705</td><td>Y</td></tr>
+</tbody>
+</table>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: Dependency Graph -->
+<!-- ============================================================ -->
+<h2 id="s4">4. Dependency Graph</h2>
+<p>The following diagram shows how the 10+ record types relate to each other across all three programs:</p>
+
+<div class="mermaid">
+graph TD
+    subgraph "Primary Data Records"
+        EE["EMPLOYEES"]
+        ER["EMPLOYERS"]
+        EO["EROPTIONS"]
+        DEP["DEPENDENTS"]
+    end
+    subgraph "Billing Records"
+        ERADJ["ERADJ"]
+    end
+    subgraph "Correspondence Records"
+        CDR["CORRESP.DATA.REC (in-memory)"]
+        CT["CORRESP.TRACKING"]
+    end
+    subgraph "Audit Records"
+        SL["SAVEDLISTS"]
+        SM["SYSMGMT"]
+    end
+    subgraph "FI-Only Records"
+        CL["CERTS.LAYOUT"]
+        CM["CERTS.MERGE"]
+        CT2["CERTS.TEXT2"]
+        LC["LETTER.COPIES"]
+        OC["OUTPUT.CONTROL"]
+        GI["GROUPINFO"]
+    end
+    EE -- "EEFILENO" --> ER
+    EE -- "EEFILENO" --> EO
+    EE -- "EEID.DEPNO" --> DEP
+    ER -- "ERBILLEDTO" --> ERADJ
+    EO -- "EOCOBRA.NOTICE / EOHIPAAP" --> ERADJ
+    EE --> CDR
+    ER --> CDR
+    DEP --> CDR
+    CDR --> CT
+    ER -- "ERTRUST" --> GI
+    GI -- "GINPP" --> OC
+    ER -- "ERINS.CARRIER" --> CL
+    CL --> CM
+    CM --> CT2
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: Current Coupling Map -->
+<!-- ============================================================ -->
+<h2 id="s5">5. Current Coupling Map</h2>
+<p>This diagram shows the 8+ functional concerns tangled across the 3 programs, illustrating how responsibilities are duplicated rather than shared:</p>
+
+<div class="mermaid">
+graph LR
+    subgraph "COBRAN"
+        C1["Eligibility Filtering"]
+        C2["Employer/Group Loading"]
+        C3["Letter Generation (EE)"]
+        C4["Letter Generation (Dep)"]
+        C5["Billing (ERADJ)"]
+        C6["Audit Lists"]
+    end
+    subgraph "HIPAA.NPP"
+        H1["Eligibility Filtering"]
+        H2["Employer/Group Loading"]
+        H3["SF/FI Routing"]
+        H4["SmartComm Submission"]
+        H5["Legacy PCL Generation"]
+        H6["Billing (ERADJ)"]
+        H7["FTP Transmission"]
+        H8["Audit Lists"]
+        H9["Letter Storage"]
+    end
+    subgraph "PRINT.DISABLED.DEP.LETTERS"
+        P1["Eligibility Filtering"]
+        P2["Dep Need Validation"]
+        P3["Letter Generation"]
+        P4["Dep Record Update"]
+        P5["Error Reporting/Email"]
+        P6["Security Check"]
+    end
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: Coupling Points Table -->
+<!-- ============================================================ -->
+<h2 id="s6">6. Coupling Points Table</h2>
+<p>The following table identifies the 8 major coupling points where the same functional concern is implemented independently across multiple programs:</p>
+
+<table>
+<thead><tr><th>Concern</th><th>Where It's Tangled</th><th>Shared Records</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong>1. Eligibility Filtering</strong></td>
+  <td>COBRAN: <code>MAIN.LOOP</code> + <code>SET.FUTURE.EEIDX</code><br>HIPAA.NPP: <code>FILTER.EEIDS</code><br>PDDL: <code>VALIDATE.DEP.DATA</code> + <code>CHECK.DEP.NEED</code></td>
+  <td>EMPLOYEES (EENEED, EESTATUS, EEEFFDATE, EEMEDCOV/EEDENCOV)</td>
+</tr>
+<tr>
+  <td><strong>2. Employer/Group Context Loading</strong></td>
+  <td>COBRAN: inline in <code>MAIN.LOOP</code> (lines 232&ndash;260)<br>HIPAA.NPP: <code>SET.SKIP.FILENO</code> + <code>DETERMINE.HIPAA.CUTOFF.DT</code></td>
+  <td>EMPLOYERS, EROPTIONS (read together, cached on FILENO change)</td>
+</tr>
+<tr>
+  <td><strong>3. SmartComm Submission</strong></td>
+  <td>COBRAN: <code>SUBMIT.CORRESP.REQUEST</code> (EE + DP paths)<br>HIPAA.NPP: <code>SUBMIT.CORRESP.REQUEST</code><br>PDDL: <code>SUBMIT.CORRESP.REQUEST</code></td>
+  <td>CORRESP.DATA.REC, CORRESP.TRACKING (same BASIC.SMARTCOMM.DOC.1 pattern)</td>
+</tr>
+<tr>
+  <td><strong>4. Billing (ERADJ)</strong></td>
+  <td>COBRAN: <code>DO.BILLING</code> (COBRACHG)<br>HIPAA.NPP: <code>DO.BILLING</code> (HIPAA)</td>
+  <td>ERADJ (same increment-or-create loop, different EADISTFIELD values)</td>
+</tr>
+<tr>
+  <td><strong>5. Fully-Insured HIPAA Generation</strong></td>
+  <td>HIPAA.NPP only: <code>GET.HIPAA.FORMS</code> + <code>GENERATE.HIPAA.FORMS</code></td>
+  <td>CERTS.LAYOUT, CERTS.MERGE, CERTS.TEXT2, LETTER.COPIES, OUTPUT.CONTROL</td>
+</tr>
+<tr>
+  <td><strong>6. FTP Transmission</strong></td>
+  <td>HIPAA.NPP only: <code>FTP.FILE</code></td>
+  <td>FTP.LOG, FTP.REQUESTS, REDCARD.PCL</td>
+</tr>
+<tr>
+  <td><strong>7. Audit List Management</strong></td>
+  <td>COBRAN: <code>END.REPORT.FILE</code> (5 lists)<br>HIPAA.NPP: inline SAVE.LIST commands (3 lists)</td>
+  <td>&amp;SAVEDLISTS&amp;</td>
+</tr>
+<tr>
+  <td><strong>8. Dependent Record Update</strong></td>
+  <td>PDDL: <code>WRITE.DEP.REC</code> + <code>UPDATE.DEP.NEED</code></td>
+  <td>DEPENDENTS (DPDDL.SENT, DPDDL.LETTERS, DPDEP.NEED)</td>
+</tr>
+</tbody>
+</table>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: Decoupling Strategy -->
+<!-- ============================================================ -->
+<h2 id="s7">7. Decoupling Strategy</h2>
+<p>The following 8 extractions would convert the duplicated logic into shared, cataloged subroutines:</p>
+
+<h3>7.1 <code>*CHECK.LETTER.ELIGIBILITY</code></h3>
+<div class="card">
+<h4>Proposed Signature</h4>
+<pre><code>SUBROUTINE *CHECK.LETTER.ELIGIBILITY(IS.ELIGIBLE, MAT EEREC, EEID, TODAY, LETTER.TYPE, OPTIONS)</code></pre>
+<p><strong>Extracts from:</strong></p>
+<ul>
+<li>COBRAN &mdash; <code>MAIN.LOOP</code> (lines 196&ndash;271) + <code>SET.FUTURE.EEIDX</code></li>
+<li>HIPAA.NPP &mdash; <code>FILTER.EEIDS</code> (lines 458&ndash;690)</li>
+<li>PDDL &mdash; <code>VALIDATE.DEP.DATA</code> + <code>CHECK.DEP.NEED</code></li>
+</ul>
+<p><strong>Current duplicated pattern:</strong></p>
+<pre><code>* Common pattern in all 3 programs:
+IF INDEX(EENEED,'X',1) > 0 THEN CONTINUE
+LOCATE TODAY IN EEEFFDATE&lt;1,1&gt; BY 'DR' SETTING EEIDX ELSE NULL
+IF EEEFFDATE&lt;1,EEIDX&gt; = '' AND EEIDX > 1 THEN EEIDX -= 1
+* (then program-specific status/coverage checks)</code></pre>
+<p><strong>How it works:</strong> Consolidates the common EENEED check, effective date location, and status filtering into a single subroutine. The <code>LETTER.TYPE</code> parameter ('COBRA', 'HIPAA', 'DDL') selects which additional checks apply (e.g., coverage validation for HIPAA, DEP.NEED validation for DDL). Returns <code>IS.ELIGIBLE</code> flag and populates <code>EEIDX</code> via OPTIONS.</p>
+</div>
+
+<h3>7.2 <code>*LOAD.EMPLOYER.CONTEXT</code></h3>
+<div class="card">
+<h4>Proposed Signature</h4>
+<pre><code>SUBROUTINE *LOAD.EMPLOYER.CONTEXT(LOAD.STATUS, MAT ERREC, MAT EOREC, FILENO, LAST.FILENO, TODAY)</code></pre>
+<p><strong>Extracts from:</strong></p>
+<ul>
+<li>COBRAN &mdash; inline in <code>MAIN.LOOP</code> (lines 232&ndash;260)</li>
+<li>HIPAA.NPP &mdash; <code>SET.SKIP.FILENO</code> (lines 743&ndash;775)</li>
+</ul>
+<p><strong>Current duplicated pattern:</strong></p>
+<pre><code>IF EEFILENO&lt;1,EEIDX&gt; &lt;&gt; FILENO THEN
+   FILENO = EEFILENO&lt;1,EEIDX&gt;
+   CALL *READREC('',MAT ERREC,EMPLOYERS,FILENO,'')
+   IF @USER.RETURN.CODE # '' THEN ... CONTINUE
+   CALL *READREC('',MAT EOREC,EROPTIONS,FILENO,'')
+   IF @USER.RETURN.CODE # '' THEN ... CONTINUE
+END</code></pre>
+<p><strong>How it works:</strong> Wraps the cached employer+eroptions read into a single subroutine. Compares FILENO to LAST.FILENO; if different, reads both records and returns status. Callers no longer duplicate the caching logic.</p>
+</div>
+
+<h3>7.3 <code>*SUBMIT.LETTER.REQUEST</code></h3>
+<div class="card">
+<h4>Proposed Signature</h4>
+<pre><code>SUBROUTINE *SUBMIT.LETTER.REQUEST(ERROR.MESSAGES, DOCUMENT.NAME, RECIPIENT.ID, FILENO, ADDITIONAL.DEPNO, ADDITIONAL.PURPOSE, PROGRAM.NAME)</code></pre>
+<p><strong>Extracts from:</strong></p>
+<ul>
+<li>COBRAN &mdash; <code>SUBMIT.CORRESP.REQUEST</code> (lines 445&ndash;594)</li>
+<li>HIPAA.NPP &mdash; <code>SUBMIT.CORRESP.REQUEST</code></li>
+<li>PDDL &mdash; <code>SUBMIT.CORRESP.REQUEST</code> (lines 766&ndash;821)</li>
+</ul>
+<p><strong>Current duplicated pattern:</strong></p>
+<pre><code>CORRESP.DATA.REC = ''
+CORRESP.DATA.REC&lt;2&gt; = FILENO
+CORRESP.INPUT.DEF.ID = 'BASIC.SMARTCOMM.DOC.1'
+RECIPIENT.TYPE = 'DEPENDENT'
+METHOD.REQUESTED = 'LOOKUP'
+REQUEST.SOURCE = PROGRAM.NAME
+CALL *CREATE.CORRESP.TRACKING(ERROR.MESSAGES,...)</code></pre>
+<p><strong>How it works:</strong> Wraps the entire CORRESP.DATA.REC assembly and <code>*CREATE.CORRESP.TRACKING</code> call into a single subroutine. All three programs build the same structure with only DOCUMENT.NAME, RECIPIENT.ID, and the additional dependent fields varying.</p>
+</div>
+
+<h3>7.4 <code>*ADD.NOTICE.BILLING</code></h3>
+<div class="card">
+<h4>Proposed Signature</h4>
+<pre><code>SUBROUTINE *ADD.NOTICE.BILLING(MAT EAREC, FILENO, EEID, EEIDX, MAT EEREC, MAT EOREC, MAT ERREC, DIST.FIELD, FEE.AMOUNT)</code></pre>
+<p><strong>Extracts from:</strong></p>
+<ul>
+<li>COBRAN &mdash; <code>DO.BILLING</code> (lines 598&ndash;684) with <code>DIST.FIELD='COBRACHG'</code></li>
+<li>HIPAA.NPP &mdash; <code>DO.BILLING</code> with <code>DIST.FIELD='HIPAA'</code></li>
+</ul>
+<p><strong>Current duplicated pattern:</strong></p>
+<pre><code>* Increment-or-create loop:
+SUFFIX = ''
+LOOP
+   FILENO.KEY = FILENO:BILLPERIODO:SUFFIX
+   SUFFIX += 1
+   CALL *READREC('',MAT EAREC,ERADJ,FILENO.KEY,'WAIT')
+   IF @USER.RETURN.CODE # '' THEN RELEASE ERADJ,FILENO.KEY ; EXIT
+   IF EADESC[13] = 'COBRA NOTICES' THEN EXIT
+REPEAT
+* (then update EADISTFIELD, EADISTAMOUNT, EAAMOUNT, write back)</code></pre>
+<p><strong>How it works:</strong> Parameterizes the billing subroutine with <code>DIST.FIELD</code> ('COBRACHG' or 'HIPAA') and <code>FEE.AMOUNT</code> (from EOCOBRA.NOTICE or EOHIPAAP). The increment-or-create loop and ERADJ write logic are identical.</p>
+</div>
+
+<h3>7.5 <code>*GENERATE.FI.HIPAA.NOTICE</code></h3>
+<div class="card">
+<h4>Proposed Signature</h4>
+<pre><code>SUBROUTINE *GENERATE.FI.HIPAA.NOTICE(OUTPUT.STATUS, EEID, FILENO, MAT EEREC, MAT ERREC, FILENAME, HOLD)</code></pre>
+<p><strong>Extracts from:</strong></p>
+<ul>
+<li>HIPAA.NPP &mdash; FI branch of <code>MAIN.LOOP</code>, <code>GET.HIPAA.FORMS</code>, <code>GENERATE.HIPAA.FORMS</code></li>
+</ul>
+<p><strong>How it works:</strong> Encapsulates the entire Fully-Insured PCL generation path (CERTS.LAYOUT lookup, form generation, text merging) into a self-contained subroutine. This isolates the legacy PCL path from the main program flow.</p>
+</div>
+
+<h3>7.6 <code>*SUBMIT.PRINT.FTP</code></h3>
+<div class="card">
+<h4>Proposed Signature</h4>
+<pre><code>SUBROUTINE *SUBMIT.PRINT.FTP(FTP.STATUS, FILENAME, FTP.ID, PROGRAM.NAME)</code></pre>
+<p><strong>Extracts from:</strong></p>
+<ul>
+<li>HIPAA.NPP &mdash; <code>FTP.FILE</code> subroutine</li>
+</ul>
+<p><strong>How it works:</strong> Wraps the FTP submission logic (FTP.REQUESTS creation, FTP.LOG update) into a reusable subroutine. Currently only used by HIPAA.NPP but extraction enables future reuse by any program that needs to FTP print files to RedCard.</p>
+</div>
+
+<h3>7.7 <code>*SAVE.PROCESS.AUDIT</code></h3>
+<div class="card">
+<h4>Proposed Signature</h4>
+<pre><code>SUBROUTINE *SAVE.PROCESS.AUDIT(LIST.DATA, LIST.NAME.PREFIX, UV.LOGNAME, INCLUDE.TIMESTAMP)</code></pre>
+<p><strong>Extracts from:</strong></p>
+<ul>
+<li>COBRAN &mdash; <code>END.REPORT.FILE</code> (lines 688&ndash;756)</li>
+<li>HIPAA.NPP &mdash; inline <code>SAVE.LIST</code> commands at end of program</li>
+</ul>
+<p><strong>Current duplicated pattern:</strong></p>
+<pre><code>LIST.NAME = 'COBRAN.DONE':UV.LOGNAME
+WRITELIST COBRAN.DONE ON LIST.NAME
+* Also writes timestamped version:
+LIST.NAME = 'COBRAN.DONE':UV.LOGNAME:'.':DATE.DONEO:'.':TIME.DONEO
+WRITELIST COBRAN.DONE ON LIST.NAME</code></pre>
+<p><strong>How it works:</strong> Generalizes the audit list saving pattern into a subroutine that accepts the list data, a prefix, and a flag for whether to create a timestamped copy. Both programs use the same WRITELIST + naming convention.</p>
+</div>
+
+<h3>7.8 <code>*UPDATE.DEP.LETTER.STATUS</code></h3>
+<div class="card">
+<h4>Proposed Signature</h4>
+<pre><code>SUBROUTINE *UPDATE.DEP.LETTER.STATUS(MAT DPREC, EEID.DEPNO, CUR.NEED, TODAY, ERROR.DEP.NEED, PROGRAM.NAME)</code></pre>
+<p><strong>Extracts from:</strong></p>
+<ul>
+<li>PDDL &mdash; <code>WRITE.DEP.REC</code> (lines 883&ndash;906) + <code>UPDATE.DEP.NEED</code> (lines 859&ndash;881)</li>
+</ul>
+<p><strong>Current pattern:</strong></p>
+<pre><code>* UPDATE.DEP.NEED: tracks which letters were sent today
+IF DPDDL.SENT&lt;1,1&gt; = TODAY THEN
+   * append to today's letter list
+   INS CUR.NEED BEFORE TEMP.DDL.LETTERS&lt;-1&gt;
+END ELSE
+   * insert new date entry
+   INS TODAY BEFORE DPDDL.SENT&lt;1,1&gt;
+   INS CUR.NEED BEFORE DPDDL.LETTERS&lt;1,1&gt;
+END
+* WRITE.DEP.REC: clears DPDEP.NEED or preserves error codes
+IF MAX.ERR.NEED = 0 THEN DPDEP.NEED = '' ELSE DPDEP.NEED = ERROR.DEP.NEED
+CALL *WRITEREC('',MAT DPREC,DEPENDENTS,EEID.DEPNO,'TRANS.LOG,':PROGRAM.NAME)</code></pre>
+<p><strong>How it works:</strong> Combines the letter-sent tracking update and the dependent record write-back into a single transactional subroutine. Currently PDDL-specific but extracted for consistency and future reuse if other programs need to update dependent letter status.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: Decoupled Architecture -->
+<!-- ============================================================ -->
+<h2 id="s8">8. Decoupled Architecture</h2>
+<p>After extracting the 8 shared subroutines, each program becomes a thin orchestrator that delegates to well-defined, reusable components:</p>
+
+<div class="mermaid">
+graph TD
+    COBRAN["COBRAN (orchestrator)"]
+    HIPAA["HIPAA.NPP (orchestrator)"]
+    PDDL["PRINT.DISABLED.DEP.LETTERS (orchestrator)"]
+    EF["*CHECK.LETTER.ELIGIBILITY"]
+    EC["*LOAD.EMPLOYER.CONTEXT"]
+    CS["*SUBMIT.LETTER.REQUEST"]
+    BA["*ADD.NOTICE.BILLING"]
+    FI["*GENERATE.FI.HIPAA.NOTICE"]
+    FTP["*SUBMIT.PRINT.FTP"]
+    AL["*SAVE.PROCESS.AUDIT"]
+    DU["*UPDATE.DEP.LETTER.STATUS"]
+    COBRAN --> EF
+    COBRAN --> EC
+    COBRAN --> CS
+    COBRAN --> BA
+    COBRAN --> AL
+    HIPAA --> EF
+    HIPAA --> EC
+    HIPAA --> CS
+    HIPAA --> BA
+    HIPAA --> FI
+    HIPAA --> FTP
+    HIPAA --> AL
+    PDDL --> EF
+    PDDL --> CS
+    PDDL --> DU
+    PDDL --> EC
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 9: Priority Order for Decoupling -->
+<!-- ============================================================ -->
+<h2 id="s9">9. Priority Order for Decoupling</h2>
+
+<table>
+<thead><tr><th>Priority</th><th>Extraction</th><th>Impact</th><th>Reason</th></tr></thead>
+<tbody>
+<tr><td><span class="badge badge-red">1</span></td><td><code>*SUBMIT.LETTER.REQUEST</code></td><td>All 3 programs</td><td>Highest duplication &mdash; identical CORRESP.DATA.REC assembly and *CREATE.CORRESP.TRACKING call in all 3 programs. Single point of change for SmartComm API evolution.</td></tr>
+<tr><td><span class="badge badge-red">2</span></td><td><code>*CHECK.LETTER.ELIGIBILITY</code></td><td>All 3 programs</td><td>Core eligibility logic (EENEED check, effective date location, status filtering) duplicated with subtle variations. Unification prevents eligibility drift.</td></tr>
+<tr><td><span class="badge badge-amber">3</span></td><td><code>*LOAD.EMPLOYER.CONTEXT</code></td><td>COBRAN + HIPAA.NPP</td><td>Employer + EROPTIONS cached read pattern is identical. Both programs must stay in sync on caching behavior.</td></tr>
+<tr><td><span class="badge badge-amber">4</span></td><td><code>*ADD.NOTICE.BILLING</code></td><td>COBRAN + HIPAA.NPP</td><td>ERADJ increment-or-create loop is identical except for EADISTFIELD value. Financial correctness requires a single billing implementation.</td></tr>
+<tr><td><span class="badge badge-amber">5</span></td><td><code>*SAVE.PROCESS.AUDIT</code></td><td>COBRAN + HIPAA.NPP</td><td>Audit list naming and saving conventions should be consistent. Low risk extraction with moderate value.</td></tr>
+<tr><td><span class="badge badge-blue">6</span></td><td><code>*UPDATE.DEP.LETTER.STATUS</code></td><td>PDDL only</td><td>Currently PDDL-specific but encapsulates complex dependent record update logic. Extraction improves testability and prepares for reuse.</td></tr>
+<tr><td><span class="badge badge-blue">7</span></td><td><code>*GENERATE.FI.HIPAA.NOTICE</code></td><td>HIPAA.NPP only</td><td>Isolates legacy PCL generation path. Enables future retirement of FI path without touching orchestrator.</td></tr>
+<tr><td><span class="badge badge-blue">8</span></td><td><code>*SUBMIT.PRINT.FTP</code></td><td>HIPAA.NPP only</td><td>FTP logic is self-contained. Extraction is low effort and enables reuse if other programs need vendor printing.</td></tr>
+</tbody>
+</table>
+
+<!-- ============================================================ -->
+<!-- SECTION 10: Program Flow Diagrams -->
+<!-- ============================================================ -->
+<h2 id="s10">10. Program Flow Diagrams</h2>
+
+<h3 id="s10-cobran">COBRAN Flow</h3>
+<div class="mermaid">
+graph TD
+    START["COBRAN Start"] --> INIT["INIT.VARS"]
+    INIT --> SELECT["SELECT EMPLOYEES with NEED='C'"]
+    SELECT --> LOOP["MAIN.LOOP: READNEXT EEID"]
+    LOOP --> READ_EE["Read EMPLOYEES record"]
+    READ_EE --> CHECK_NEED["Check EENEED for 'X'"]
+    CHECK_NEED --> LOCATE_EFF["LOCATE effective date index"]
+    LOCATE_EFF --> LOAD_ER["Load EMPLOYERS + EROPTIONS (if FILENO changed)"]
+    LOAD_ER --> STATUS_CHECK["Check status, termination, COBRAFEE"]
+    STATUS_CHECK --> DEP_CHECK["Check dependent COBRA eligibility"]
+    DEP_CHECK -->|"Spouse at diff addr"| SUBMIT_DP["SUBMIT.CORRESP.REQUEST (DP template)"]
+    DEP_CHECK -->|"Employee notice"| SUBMIT_EE["SUBMIT.CORRESP.REQUEST (EE template)"]
+    SUBMIT_DP --> BILLING["DO.BILLING (ERADJ with COBRACHG)"]
+    SUBMIT_EE --> BILLING
+    BILLING --> LOOP
+    LOOP -->|"End of list"| AUDIT["END.REPORT.FILE (save lists)"]
+</div>
+
+<h3 id="s10-hipaa">HIPAA.NPP Flow</h3>
+<div class="mermaid">
+graph TD
+    START["HIPAA.NPP Start"] --> INIT["Initialize + HIPAA.DAILY.COUNTER"]
+    INIT --> FILTER["FILTER.EEIDS: Build EEID.LIST"]
+    FILTER --> SF_FI{"SF or FI?"}
+    SF_FI -->|"Self-Funded"| SF_LOOP["SF Loop: For each EEID.DEPNO"]
+    SF_FI -->|"Fully-Insured"| FI_LOOP["FI Loop: For each EEID.DEPNO"]
+    SF_LOOP --> SC_SUBMIT["SUBMIT.CORRESP.REQUEST (SmartComm)"]
+    SC_SUBMIT --> SF_BILLING["DO.BILLING (ERADJ with HIPAA)"]
+    SF_BILLING --> SF_LOOP
+    FI_LOOP --> GET_FORMS["GET.HIPAA.FORMS (CERTS.LAYOUT lookup)"]
+    GET_FORMS --> GEN_FORMS["GENERATE.HIPAA.FORMS (PCL output)"]
+    GEN_FORMS --> FI_BILLING["DO.BILLING (ERADJ with HIPAA)"]
+    FI_BILLING --> FI_LOOP
+    FI_LOOP -->|"Done"| FTP["FTP.FILE"]
+    SF_LOOP -->|"Done"| SAVE["Save audit lists"]
+    FTP --> SAVE
+</div>
+
+<h3 id="s10-pddl">PRINT.DISABLED.DEP.LETTERS Flow</h3>
+<div class="mermaid">
+graph TD
+    START["PRINT.DISABLED.DEP.LETTERS Start"] --> INIT["INIT.VARS (6 letter type mappings)"]
+    INIT --> SELECT["SELECT EMPLOYEES with STATUS='H'"]
+    SELECT --> LOOP["MAIN.LOOP: READNEXT EEID"]
+    LOOP --> VALIDATE["VALIDATE.DEP.DATA"]
+    VALIDATE --> CHECK["CHECK.DEP.NEED (read DEPENDENTS)"]
+    CHECK --> NEED_LOOP["For each CUR.NEED in DPDEP.NEED"]
+    NEED_LOOP --> SET_TMPL["SET.SMARTCOMM.TEMPLATE (lookup in LTR.TYPES)"]
+    SET_TMPL --> SUBMIT["SUBMIT.CORRESP.REQUEST"]
+    SUBMIT -->|"Success"| UPDATE["UPDATE.DEP.NEED"]
+    SUBMIT -->|"Error"| ERR["Add to ERROR.DEP.NEED"]
+    UPDATE --> NEED_LOOP
+    ERR --> NEED_LOOP
+    NEED_LOOP -->|"Done"| WRITE["WRITE.DEP.REC"]
+    WRITE --> LOOP
+    LOOP -->|"End"| EMAIL["Email error report"]
+</div>
+
+</main>
+
+<script>
+// Highlight active sidebar link on scroll
+const sections = document.querySelectorAll('h2[id], h3[id]');
+const navLinks = document.querySelectorAll('nav.sidebar a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>
